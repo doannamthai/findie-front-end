@@ -8,16 +8,6 @@ import Register from '../pages/register/Register';
 import Dashboard from '../pages/dashboard/Dashboard';
 
 
-function UnLoggedInRoute ({component: Component, loggedIn, ...rest}) {
-    return (
-      <Route
-        {...rest}
-        render={(props) => loggedIn === false
-          ? <Component {...props} />
-          : <Redirect to={{pathname: '/', state: {from: props.location}}} />}
-      />
-    )
-}
 
 function LoggedInRoute ({component: Component, loggedIn, ...rest}) {
     return (

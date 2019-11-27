@@ -143,7 +143,7 @@ class NavBar extends Component{
                         <Grid container justify="center" alignItems="center">
                           <Avatar className={classes.orangeAvatar}>OP</Avatar>
                         </Grid>      
-                      <MenuItem  onClick={() => {this.handleLink("/dashboard")}} className={classes.menuItem}>
+                      <MenuItem  onClick={() => {this.handleLink("/dashboard/submission")}} className={classes.menuItem}>
                         <ListItemIcon className={classes.icon}>
                           <ProfileIcon />
                         </ListItemIcon>

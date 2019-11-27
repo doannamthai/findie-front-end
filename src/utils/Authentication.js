@@ -19,7 +19,7 @@ class Authentication extends Component {
         localStorage.removeItem(user_id);
     }
     static getUserId(){
-        return localStorage.getItem(user_id);
+        return parseInt(localStorage.getItem(user_id));
     }
 
     static getUsername(){

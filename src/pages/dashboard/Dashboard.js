@@ -9,16 +9,27 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Container from '@material-ui/core/Container';
-import { mainListItems, secondaryListItems } from './listItems';
 import Link from '@material-ui/core/Link';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import Submission from './submission/Submission';
-import Card from '@material-ui/core/Card';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import Statistic from './statistic/Statistic';
+import Profile from './profile/Profile';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import PeopleIcon from '@material-ui/icons/People';
+import PieChartIcon from '@material-ui/icons/PieChart';
+import HomeIcon from '@material-ui/icons/Home';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import Authentication from '../../utils/Authentication';
+import BusinessIcon from '@material-ui/icons/Business';
+import Company from './company/Company';
 
 const drawerWidth = 240;
-
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -107,9 +118,94 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function Dashboard() {
+function SubmissionPanel(){
+    return (
+         <div>
+        <Breadcrumbs style={{marginBottom: 10}} separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Link color="inherit" href="/" >
+          Findie
+        </Link>
+        <Link color="inherit" href="/dashboard" >
+          Dashboard
+        </Link>
+        <Typography color="textPrimary">Submissions</Typography>
+      </Breadcrumbs>
+            <Submission/>
+            </div>
+    )
+}
+
+
+function StatisticPanel(){
+    return (
+         <div>
+        <Breadcrumbs style={{marginBottom: 10}} separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Link color="inherit" href="/" >
+          Findie
+        </Link>
+        <Link color="inherit" href="/dashboard" >
+          Dashboard
+        </Link>
+        <Typography color="textPrimary">Statistic</Typography>
+      </Breadcrumbs>
+            <Statistic/>
+            </div>
+    )
+}
+
+
+function CompanyPanel(){
+    return (
+         <div>
+        <Breadcrumbs style={{marginBottom: 10}} separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Link color="inherit" href="/" >
+          Findie
+        </Link>
+        <Link color="inherit" href="/dashboard" >
+          Dashboard
+        </Link>
+        <Typography color="textPrimary">Company</Typography>
+      </Breadcrumbs>
+            <Company/>
+            </div>
+    )
+}
+
+
+function ProfilePanel(){
+    return (
+         <div>
+        <Breadcrumbs style={{marginBottom: 10}} separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Link color="inherit" href="/" >
+          Findie
+        </Link>
+        <Link color="inherit" href="/dashboard" >
+          Dashboard
+        </Link>
+        <Typography color="textPrimary">Profile</Typography>
+      </Breadcrumbs>
+            <Profile/>
+            </div>
+    )
+}
+
+function handleLink(src){
+    window.location.href = src;
+  }
+
+function findComponent(subName){
+    if (subName === "submission") return <SubmissionPanel/>
+    else if (subName === "profile") return <ProfilePanel/>
+    else if (subName === "statistic") return <StatisticPanel/>
+    else if (subName === "company") return <CompanyPanel/>
+}
+
+export default function Dashboard(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open] = React.useState(true);
+
+  const pathName = props.location.pathname;
+  const subName = pathName.substring(pathName.lastIndexOf("/")+1);
 
   return (
     <div className={classes.root}>
@@ -124,7 +220,6 @@ export default function Dashboard() {
         classes={{
           paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
         }}
-        //open={open}
       >
         <div className={classes.toolbarIcon}>  
             <ChildCareIcon style={{color: "white", marginLeft: 10}} width={40} height={40}/>
@@ -134,25 +229,55 @@ export default function Dashboard() {
               
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List style={{marginTop: 30}}>
+            
+    <ListItem button selected={subName === "submission"} onClick={() => handleLink("/dashboard/submission")} >
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Submissions" />
+    </ListItem>
+    <ListItem button  selected={subName === "company"} onClick={() => handleLink("/dashboard/company")} >
+      <ListItemIcon>
+        <BusinessIcon/>
+      </ListItemIcon>
+      <ListItemText primary="Company" />
+    </ListItem>
+    <ListItem button selected={subName === "statistic"} onClick={() => handleLink("/dashboard/statistic")} >
+      <ListItemIcon>
+        <PieChartIcon/>
+      </ListItemIcon>
+      <ListItemText primary="Statistic" />
+    </ListItem>
+    <ListItem button  selected={subName === "profile"} onClick={() => handleLink("/dashboard/profile")} >
+      <ListItemIcon>
+        <PeopleIcon />
+      </ListItemIcon>
+      <ListItemText primary="Profile" />
+    </ListItem>
+        </List>
         <Divider />
-        <List>{secondaryListItems}</List>
+        <List>
+    <ListSubheader inset>Others</ListSubheader>
+    <ListItem button>
+      <ListItemIcon>
+        <HomeIcon/>
+      </ListItemIcon>
+      <ListItemText primary="Homepage"  onClick={() => handleLink("/")} />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <ExitToAppIcon/>
+      </ListItemIcon>
+      <ListItemText primary="Logout"  onClick={() => {Authentication.deleteSession(); handleLink("/")}} />
+    </ListItem>
+
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="xl" className={classes.container}>
-            <div>
-            <Breadcrumbs style={{marginBottom: 10}} separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-        <Link color="inherit" href="/" >
-          Findie
-        </Link>
-        <Link color="inherit" href="/dashboard" >
-          Dashboard
-        </Link>
-        <Typography color="textPrimary">Submissions</Typography>
-      </Breadcrumbs>
-            <Submission/>
-            </div>
+            {findComponent(subName)}
         </Container>
       </main>
     </div>

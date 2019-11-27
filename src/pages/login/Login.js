@@ -81,7 +81,7 @@ class Login extends Component {
     onSubmitForm = (e) => {
         e.preventDefault();
         const {username, password} = this.state;
-        if (username.length == 0 || password.length == 0){
+        if (username.length === 0 || password.length === 0){
              this.setState({err: "Username and password must not be empty"});
              return;
         }

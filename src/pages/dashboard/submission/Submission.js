@@ -20,7 +20,7 @@ import {
   Dialog,
   Button,
 } from '@material-ui/core';
-import {HOST, SUBMISSION_LISTING, SUBMISSION_DELETE, SUBMISSION_PROGRESS_UPDATE} from '../../../api/Api';
+import {HOST, SUBMISSION_LISTING, SUBMISSION_DELETE} from '../../../api/Api';
 import Authentication from '../../../utils/Authentication';
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -113,10 +113,10 @@ const DialogActions = withStyles(theme => ({
 
 function getChip(progress){
     const progress_type = progress.progress_type, progress_name = progress.name
-    if (progress_type == 1) return <Chip style={{backgroundColor: "#424242", color: "white"}} label={progress_name}/>
-    else if (progress_type == 2) return <Chip style={{backgroundColor: "#d84315", color: "white"}} label={progress_name}/>
-    else if (progress_type == 3) return <Chip style={{backgroundColor: "#4e342e", color: "white"}} label={progress_name}/>
-    else if (progress_type == 4) return <Chip style={{backgroundColor: "#c62828", color: "white"}} label={progress_name}/>
+    if (progress_type === 1) return <Chip style={{backgroundColor: "#424242", color: "white"}} label={progress_name}/>
+    else if (progress_type === 2) return <Chip style={{backgroundColor: "#d84315", color: "white"}} label={progress_name}/>
+    else if (progress_type === 3) return <Chip style={{backgroundColor: "#4e342e", color: "white"}} label={progress_name}/>
+    else if (progress_type === 4) return <Chip style={{backgroundColor: "#c62828", color: "white"}} label={progress_name}/>
     return <Chip style={{backgroundColor: "#2e7d32", color: "white"}} label={progress_name}/>
 }
 
@@ -244,7 +244,7 @@ class Submission extends React.Component{
     render(){
         const {classes} = this.props;
         const {submissions, page, rowsPerPage, selectedSubmissions, deleteLoading} = this.state;
-        const disableDelete = selectedSubmissions.length == 0;
+        const disableDelete = selectedSubmissions.length === 0;
         return(
     <Card
       className={classes.root}

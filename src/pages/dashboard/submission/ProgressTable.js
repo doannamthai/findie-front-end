@@ -3,7 +3,6 @@ import MaterialTable from 'material-table';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import Button from '@material-ui/core/Button';
