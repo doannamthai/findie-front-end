@@ -27,6 +27,8 @@ import {HOST, SUBMISSION_PROGRESS_UPDATE} from '../../../api/Api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/styles';
+import MySnackbarContentWrapper from '../../../components/Snackbar';
+import { Snackbar } from "@material-ui/core";
 
 const tableIcons = {
 Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -48,19 +50,7 @@ ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
 ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-function formatDate(date) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
 
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
-
-    return [year, month, day].join('-');
-}
 
 const useStyles = theme => ({
   wrapper: {
@@ -90,7 +80,12 @@ class ProgressTable extends React.Component{
             data: this.props.progress,
             tempDate: null,
             loading: false,
+            open: false,
         };
+    }
+
+    handleClose = () => {
+        this.setState({ open: false});
     }
 
     sendNewProgress = () => {
@@ -111,6 +106,7 @@ class ProgressTable extends React.Component{
             res => {
                 this.setState({loading: false});
                 if (res.result){
+                    this.setState({open: true})
                     this.props.reload();
                 }
             },
@@ -121,10 +117,9 @@ class ProgressTable extends React.Component{
     }
 
     updateTempDate = (val, row) => {
-        let {tempDate} = this.state;
-        row.onChange(formatDate(val));
-        tempDate = val;
-        this.setState({tempDate});
+        const newDate = moment(val).format('YYYY-MM-DD').toString();
+        row.onChange(newDate);
+        this.setState({tempDate: newDate});
     }
 
 
@@ -142,7 +137,7 @@ class ProgressTable extends React.Component{
                 format="yyyy-MM-dd"
                 margin="normal"
                 id="date-picker-inline"
-                value={this.state.tempDate ? this.state.tempDate : moment(row.rowData.create_time).utc(false).toDate()}
+                value={this.state.tempDate ?  moment(this.state.tempDate).utc(false) : moment(row.rowData.create_time).utc(false)}
                 onChange={d => this.updateTempDate(d, row)}
                 KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -156,6 +151,21 @@ class ProgressTable extends React.Component{
         const state = this.state;
         return (
             <React.Fragment>
+                <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={this.state.open}
+                autoHideDuration={2000}
+                onClose={this.handleClose}
+            >
+                <MySnackbarContentWrapper
+                    variant="success"
+                    className={classes.margin}
+                    message="Updated successfully!"
+                />
+                </Snackbar>
         <MaterialTable
         title={"Application Progress History"}
         columns={this.columns()}

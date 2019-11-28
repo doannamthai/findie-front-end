@@ -138,9 +138,9 @@ class Dashboard extends React.Component {
                             ))}
                         </Grid>
                     </Grid>
-                     <Grid item xs={12}>
-                        <Grid container justify="flex-start" spacing={4}>
-                            <Grid item xs={12} sm={8}>
+                     <Grid item>
+                        <Grid container justify="center">
+                            <Grid item md>
                                 <Card style={{ height: 500 }}>
                                     <CardHeader style={{
                                         
@@ -166,32 +166,7 @@ class Dashboard extends React.Component {
 
                                 </Card>
                             </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <Card style={{ height: 500 }}>
-                                    <CardHeader  title="Overview"/>
-                                    <CardContent>
-                                        <Chart
-                                            width={'100%'}
-                                            height={'300px'}
-                                            chartType="PieChart"
-                                            loader={<div>Loading Chart</div>}
-                                            data={[
-                                                ['Task', 'Hours per Day'],
-                                                ['Work', 11],
-                                                ['Eat', 2],
-                                                ['Commute', 2],
-                                                ['Watch TV', 2],
-                                                ['Sleep', 7],
-                                            ]}
-                                            options={{
-                                                title: 'My Daily Activities',
-                                            }}
-                                            rootProps={{ 'data-testid': '1' }}
-                                        />
-                                    </CardContent>
-
-                                </Card>
-                            </Grid>
+                           
                          </Grid>
                         
                      </Grid>

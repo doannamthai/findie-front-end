@@ -25,6 +25,8 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import JobDetail from '../../components/JobDetail';
+import Chip from '@material-ui/core/Chip';
+import { Divider } from '@material-ui/core';
 
 const styles = theme => ({
     icon: {
@@ -134,6 +136,8 @@ class Homepage extends Component {
         loading: true,
         data: [],
         job: null,
+        keyword: null,
+        searchWord: null,
     }
 
     handleClickOpen = (job) => {
@@ -163,7 +167,8 @@ class Homepage extends Component {
     }
 
     fetchData = (callback) => {
-        return fetch(HOST + JOB_LISTING + `?limit=${this.state.limit}`)
+        this.setState({loading: true})
+        return fetch(HOST + JOB_LISTING + `?limit=${this.state.limit}&keyword=${this.state.keyword}`)
         .then(res => res.json())
         .then(
             (res) => {
@@ -182,6 +187,30 @@ class Homepage extends Component {
                 this.setState({data: res.result})
             }
         })
+    }
+
+    handleSearchJob = () => {
+        this.setState({searchWord: null})
+        this.fetchData((res) => {
+            if (res.result){
+                this.setState({data: res.result, searchWord: this.state.keyword})
+            }
+        })
+    }
+
+    handleChange = (e) => {
+        this.setState({keyword: e.target.value})
+    }
+
+    onDeleteKeyword = () => {
+        this.setState({keyword: null, searchWord: null}, () => {
+            this.fetchData((res) => {
+            if (res.result){
+                this.setState({data: res.result})
+            }
+        })
+        })
+        
     }
 
     render() {
@@ -210,13 +239,15 @@ class Homepage extends Component {
                                         root: classes.inputRoot,
                                         input: classes.inputInput,
                                     }}
+                                    value={this.state.keyword}
+                                    onChange={this.handleChange}
                                     inputProps={{ 'aria-label': 'search' }}
                                 />
                             </div>
                             <div className={classes.heroButtons}>
                                 <Grid container spacing={2} justify="center">
                                     <Grid item>
-                                        <Button variant="contained" color="default">
+                                        <Button variant="contained" color="default" onClick={this.handleSearchJob}>
                                             Search job
                                          </Button>
                                     </Grid>
@@ -227,7 +258,10 @@ class Homepage extends Component {
                     </div>
                     
                     <Container className={classes.cardGrid} maxWidth="md">
-                        {/* End hero unit */}
+                        {this.state.searchWord ? <div><Grid container style={{backgroundColor: "#f2f2f2", borderRadius: 10, padding: 10}} spacing={1}>
+                            <Grid item xs={1}><Typography>Keyword: </Typography></Grid>
+                            <Grid item ><Chip label={this.state.searchWord} color="primary" onDelete={this.onDeleteKeyword}/></Grid>
+                            </Grid><Divider style={{marginTop:20, marginBottom:20}}/></div> : null}
                         {loading ? <CircularProgress/> :
                         <Grid container spacing={4}>
                             {data.map(d => (

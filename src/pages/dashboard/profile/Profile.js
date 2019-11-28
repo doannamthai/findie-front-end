@@ -218,7 +218,7 @@ class Profile extends React.Component {
                                             variant="body1"
                                         >
                                             {moment().format('hh:mm A')} ({'GTM-7'})
-            </Typography>
+                                    </Typography>
                                     </div>
                                     <Avatar
                                         className={classes.avatar}

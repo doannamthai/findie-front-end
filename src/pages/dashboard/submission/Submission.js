@@ -19,8 +19,11 @@ import {
   IconButton,
   Dialog,
   Button,
+  Grid,
+  TextField,
+  Divider,
 } from '@material-ui/core';
-import {HOST, SUBMISSION_LISTING, SUBMISSION_DELETE} from '../../../api/Api';
+import {HOST, SUBMISSION_LISTING, SUBMISSION_DELETE, POSITION_TYPE, COMPANY} from '../../../api/Api';
 import Authentication from '../../../utils/Authentication';
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -31,6 +34,8 @@ import ProgressTable from './ProgressTable';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
+import AddIcon from '@material-ui/icons/Add';
+import RoleAdd from './RoleAdd';
 
 const styles = theme => ({
   root: {},
@@ -54,6 +59,9 @@ const styles = theme => ({
       marginBottom: 20,
       position: 'relative',
   },
+  addButton: {
+      marginBottom: 20,
+  },
    wrapper: {
     margin: 10,
     position: 'relative',
@@ -67,7 +75,11 @@ const styles = theme => ({
     marginTop: -12,
     marginLeft: -12,
   },
+  menu: {
+    width: 200,
+  },
 });
+
 
 const dialogStyles = theme => ({
   root: {
@@ -109,7 +121,12 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-
+function formatPositionType(data){
+    data.map(n => {
+        n.value = n.id;
+        n.label = n.type_name;
+    });
+}
 
 function getChip(progress){
     const progress_type = progress.progress_type, progress_name = progress.name
@@ -130,7 +147,10 @@ class Submission extends React.Component{
         rowsPerPage: 10,
         fetchLoading: false,
         modalOpen: false,
+        addPopupOpen: false,
     }
+
+   
 
     fetchSubmissions = () => {
         this.setState({fetchLoading: true})
@@ -144,8 +164,13 @@ class Submission extends React.Component{
         )
     }
 
+    handleChange = e => {
+        this.setState({[e.target.name]: e.target.value})
+    }
+
     componentDidMount(){
         this.fetchSubmissions();
+
     }
 
 
@@ -194,6 +219,10 @@ class Submission extends React.Component{
         this.setState({curSubmission: null})
     }
 
+    handleClosePopup = () => {
+        this.setState({addPopupOpen: false})
+    }
+
     progressModel(){
         const {classes} = this.props;
         const {curSubmission} = this.state;
@@ -215,6 +244,23 @@ class Submission extends React.Component{
         )
     }
 
+    roleAddModel(){
+        const {classes} = this.props;
+        const {addPopupOpen} = this.state;
+        return (
+            <Dialog maxWidth="md" fullWidth  aria-labelledby="customized-dialog-title" open={addPopupOpen}>
+            <DialogTitle id="customized-dialog-title" onClose={this.handleClosePopup}>
+    
+            </DialogTitle>
+            <DialogContent>
+                <RoleAdd refresh={this.fetchSubmissions}/>
+            </DialogContent>
+            <DialogActions></DialogActions>
+            </Dialog>
+        )
+
+    }
+
     handleDelete = () => {
         this.setState({deleteLoading: true});
         const sendData = {
@@ -231,7 +277,7 @@ class Submission extends React.Component{
         .then(
             res => {
                 if (res.result){
-                    this.setState({deleteLoading: false});
+                    this.setState({deleteLoading: false, selectedSubmissions: []});
                     this.fetchSubmissions();
                 }
             },
@@ -241,28 +287,44 @@ class Submission extends React.Component{
         )
     }
 
+
+
     render(){
         const {classes} = this.props;
         const {submissions, page, rowsPerPage, selectedSubmissions, deleteLoading} = this.state;
         const disableDelete = selectedSubmissions.length === 0;
         return(
     <Card
-      className={classes.root}
-    >
-        <div style={{position: 'relative', padding: 20}}>
-        <Button
-        disabled={disableDelete || deleteLoading}
-        variant="contained"
-        color="secondary"
-        className={classes.deleteButton}
-        startIcon={<DeleteIcon />}
-        onClick={this.handleDelete}
-      >
-        Delete
-      </Button>
-      {deleteLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
-      </div>
+      className={classes.root}>
+
+                <div style={{ display: 'flex' }}>
+                    <div style={{padding: 20 }}>
+                        <Button
+                            disabled={disableDelete || deleteLoading}
+                            variant="contained"
+                            color="secondary"
+                            className={classes.deleteButton}
+                            startIcon={<DeleteIcon />}
+                            onClick={this.handleDelete}
+                        >
+                            Delete
+                        </Button>
+                        {deleteLoading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                    </div>
+                    <div style={{ marginLeft: 'auto', flexShrink: 0, flexGrow: 0, padding: 20}}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.addButton}
+                            startIcon={<AddIcon />}
+                            onClick={() => this.setState({addPopupOpen: true})}
+                            >
+                            Add
+                        </Button>
+                    </div>
+                </div>
         {this.progressModel()}
+        {this.roleAddModel()}
       <CardContent className={classes.content}>
         <PerfectScrollbar>
           <div className={classes.inner}>
